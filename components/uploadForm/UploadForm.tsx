@@ -88,7 +88,7 @@ const UploadForm = () => {
 						// adapt the name-content
 						id="nameExp"
 						value={link}
-						placeholder="Link to redirect participants after they drawing their CAM"
+						placeholder="Link to redirect participants after they have drawn their CAM"
 						onChange={(event) => setLink(event.currentTarget.value)}
 					/>
 
