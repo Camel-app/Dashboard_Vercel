@@ -15,6 +15,7 @@ import {
   Radio,
   Space,
   Loader,
+  PasswordInput,
 } from "@mantine/core";
 import {
   IconArrowAutofitRight,
@@ -28,6 +29,10 @@ import {
 } from "@tabler/icons";
 import image from "../../public/logoCAM2.svg";
 import image_draw from "../../public/draw.png";
+import { useState } from "react";
+import getConfig from "next/config";
+import { useCookies } from "react-cookie";
+import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
   inner: {
@@ -78,7 +83,32 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const ApplyAccount = () => {
+  const [cookie, setCookie] = useCookies(["auth"]);
   const { classes } = useStyles();
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { publicRuntimeConfig } = getConfig();
+
+  const registerUser = async (event) => {
+    event.preventDefault();
+    const body = {
+      email: email,
+      password: password,
+    };
+
+    const res = await fetch(publicRuntimeConfig.DEV_URL + "researchers/signup", {
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+
+    const result = await res.json();
+  };
+
   return (
     // <div>
     //   <Container>
@@ -141,7 +171,7 @@ const ApplyAccount = () => {
         }}
       >
         {/* <form onSubmit={form.onSubmit((values) => registerUser(values))}> */}
-        <form>
+        <form onSubmit={($event) => registerUser($event)}>
           <TextInput
             required
             id="firstNameInput"
@@ -156,6 +186,30 @@ const ApplyAccount = () => {
             label="Last Name"
             placeholder="Your Last Name"
             // {...form.getInputProps("lastName")}
+          />
+
+          <TextInput
+            required
+            id="lastNameInput"
+            label="Username"
+            placeholder="Email address"
+            onChange={($event) => {
+              setEmail($event.target.value);
+            }}
+            value={email}
+            // {...form.getInputProps("lastName")}
+          />
+
+          <PasswordInput
+            required
+            id="pwdInput"
+            label="Password"
+            placeholder="password"
+            onChange={($event) => {
+              setPassword($event.target.value);
+            }}
+            value={password}
+            // {...form.getInputProps("password")}
           />
 
           <Select
@@ -200,7 +254,7 @@ const ApplyAccount = () => {
           <Space h="xl" />
           <div style={{ display: "flex", justifyContent: "right" }}>
             {/* {isError && <Text color="red">Please check your input</Text>}
-              {isLoading && <Loader />} */}
+            {isLoading && <Loader />} */}
             <Button id="submit" type="submit">
               Submit
             </Button>

@@ -54,17 +54,12 @@ export default function FooterCentered({ links }: FooterCenteredProps) {
         <Group className={classes.links}>{items}</Group>
 
         <Group spacing="xs" position="right" noWrap>
-
-
-        <ActionIcon size="lg" variant="default" radius="xl">
+          <ActionIcon size="lg" variant="default" radius="xl">
             <IconBrandTwitter size={18} stroke={1.5} />
           </ActionIcon>
-
-          <a href='https://www.youtube.com/@JuliusFenn' target='_blank'>
           <ActionIcon size="lg" variant="default" radius="xl">
             <IconBrandYoutube size={18} stroke={1.5} />
           </ActionIcon>
-          </a>
         </Group>
       </div>
     </div>
