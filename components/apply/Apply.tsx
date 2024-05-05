@@ -88,7 +88,32 @@ const ApplyAccount = () => {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
+  const [emailUpdates, setEmailUpdates] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
+  const handleEmailUpdateChange = (value) => {
+    setEmailUpdates(value === "yes");
+  };
+
+  const validateEmail = (input) => {
+    // Regular expression for email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(input);
+  };
+
+  const handleEmailChange = (event) => {
+    const inputValue = event.target.value;
+    setEmail(inputValue);
+    if (!validateEmail(inputValue)) {
+      setEmailError("Please enter a valid email address");
+    } else {
+      setEmailError("");
+    }
+  };
+
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const { publicRuntimeConfig } = getConfig();
 
   const registerUser = async (event) => {
@@ -96,17 +121,29 @@ const ApplyAccount = () => {
     const body = {
       email: email,
       password: password,
+      //username: username,
     };
 
-    const res = await fetch(publicRuntimeConfig.DEV_URL + "researchers/signup", {
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-    });
+    const res = await fetch(
+      publicRuntimeConfig.DEV_URL + "researchers/signup",
+      {
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+      }
+    );
 
     const result = await res.json();
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (email && username && password) {
+      registerUser(event);
+      setFormSubmitted(true);
+    }
   };
 
   return (
@@ -171,32 +208,14 @@ const ApplyAccount = () => {
         }}
       >
         {/* <form onSubmit={form.onSubmit((values) => registerUser(values))}> */}
-        <form onSubmit={($event) => registerUser($event)}>
+        <form onSubmit={handleSubmit}>
           <TextInput
             required
-            id="firstNameInput"
-            label="First Name"
-            placeholder="Your First Name"
-            // {...form.getInputProps("firstName")}
-          />
-
-          <TextInput
-            required
-            id="lastNameInput"
-            label="Last Name"
-            placeholder="Your Last Name"
-            // {...form.getInputProps("lastName")}
-          />
-
-          <TextInput
-            required
-            id="lastNameInput"
+            id="usernameInput"
             label="Username"
-            placeholder="Email address"
-            onChange={($event) => {
-              setEmail($event.target.value);
-            }}
-            value={email}
+            placeholder="Username"
+            onChange={(event) => setUsername(event.target.value)}
+            value={username}
             // {...form.getInputProps("lastName")}
           />
 
@@ -238,11 +257,26 @@ const ApplyAccount = () => {
             required
             id="emailUpdates"
             label="Receive Email Updates?"
+            onChange={handleEmailUpdateChange}
             // {...form.getInputProps("emailUpdates")}
           >
             <Radio value="yes">Yes</Radio>
             <Radio value="no">No</Radio>
           </RadioGroup>
+
+          {emailUpdates && (
+            <div>
+              <TextInput
+                required
+                id="emailInput"
+                label="Email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={handleEmailChange}
+              />
+              {emailError && <div style={{ color: "red" }}>{emailError}</div>}
+            </div>
+          )}
 
           <Textarea
             id="remarksInput"
@@ -254,7 +288,7 @@ const ApplyAccount = () => {
           <Space h="xl" />
           <div style={{ display: "flex", justifyContent: "right" }}>
             {/* {isError && <Text color="red">Please check your input</Text>}
-            {isLoading && <Loader />} */}
+              {isLoading && <Loader />} */}
             <Button id="submit" type="submit">
               Submit
             </Button>
