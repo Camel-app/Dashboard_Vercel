@@ -88,14 +88,35 @@ const ApplyAccount = () => {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
+
   const [emailUpdates, setEmailUpdates] = useState(false);
   const [emailError, setEmailError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [password, setPassword] = useState("");
+  const { publicRuntimeConfig } = getConfig();
+
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const handleEmailUpdateChange = (value) => {
     setEmailUpdates(value === "yes");
   };
 
+  const validateUsername = (input) => {
+    // Regular expression for email validation
+    const usernameRegex = /^(?![-_])[a-zA-Z0-9-_]{1,14}(?<![-_])$/;
+    return usernameRegex.test(input);
+  };
+
+  const handleUsernameChange = (event) => {
+    const inputValue = event.target.value;
+    setUsername(inputValue);
+    if (!validateUsername(inputValue)) {
+      setUsernameError("Please enter a valid username");
+    } else {
+      setUsernameError("");
+    }
+  };
   const validateEmail = (input) => {
     // Regular expression for email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -112,16 +133,12 @@ const ApplyAccount = () => {
     }
   };
 
-  const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
-  const { publicRuntimeConfig } = getConfig();
-
   const registerUser = async (event) => {
     event.preventDefault();
     const body = {
       email: email,
       password: password,
-      //username: username,
+      username: username,
     };
 
     const res = await fetch(
@@ -147,56 +164,6 @@ const ApplyAccount = () => {
   };
 
   return (
-    // <div>
-    //   <Container>
-    //     <div className={classes.inner}>
-    //       <Title className={classes.title}>
-    //         Thank you for trying out our <br></br>{" "}
-    //         <span className={classes.highlight}>
-    //           Cognitive Affective Map tools
-    //         </span>
-    //         !
-    //       </Title>
-    //     </div>
-
-    //     <Title className={classes.subtitle}>Apply for an account:</Title>
-
-    //     <div className={classes.inner}>
-    //       If you want to register an account, please send us an E-Mail and
-    //       provide the following information (copy & paste as a template):
-    //     </div>
-
-    //     <div className={classes.outerDiv}>
-    //       <ul style={{ marginTop: "20px", marginBottom: "20px" }}>
-    //         <li>First and second name:</li>
-    //         <li>
-    //           Please indicate where are you working (Researcher at University,
-    //           Private Company, Student or Somewhere else):
-    //         </li>
-    //         <li>What is your aim in using Cognitive-Affective Maps:</li>
-    //         <li>
-    //           Do you want to receive regular emails about CAM tools updates (Yes
-    //           / No):
-    //         </li>
-    //         <li>Anything to add (do you need any support, remarks, ..):</li>
-    //       </ul>
-    //     </div>
-
-    //     <div className={classes.inner}>
-    //       <div>
-    //         Write an E-Mail to:{" "}
-    //         <a
-    //           href="mailto:cam.contact@drawyourminds.de"
-    //           style={{
-    //             color: "darkblue",
-    //           }}
-    //         >
-    //           cam.contact@drawyourminds.de
-    //         </a>
-    //       </div>
-    //     </div>
-    //   </Container>
-    // </div>
     <>
       <div
         style={{
@@ -214,16 +181,16 @@ const ApplyAccount = () => {
             id="usernameInput"
             label="Username"
             placeholder="Username"
-            onChange={(event) => setUsername(event.target.value)}
+            onChange={handleUsernameChange}
             value={username}
-            // {...form.getInputProps("lastName")}
+            error={usernameError} // Display error message below the input field
           />
 
           <PasswordInput
             required
             id="pwdInput"
             label="Password"
-            placeholder="password"
+            placeholder="Password"
             onChange={($event) => {
               setPassword($event.target.value);
             }}
@@ -273,8 +240,8 @@ const ApplyAccount = () => {
                 placeholder="Enter your email"
                 value={email}
                 onChange={handleEmailChange}
+                error={emailError}
               />
-              {emailError && <div style={{ color: "red" }}>{emailError}</div>}
             </div>
           )}
 
