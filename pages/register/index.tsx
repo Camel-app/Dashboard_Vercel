@@ -1,15 +1,17 @@
-import type { NextPage } from 'next';
+import type { NextPage } from "next";
+
 import HeaderSimple from '../../components/header/Header';
-import Register from "../../components/register/Register";
+import ApplyAccount from "../../components/apply/Apply";
 import getNavbar from '../../controllers/headerFetcher';
 
+const getInformation: NextPage = () => {
 
-const RegisterPage: NextPage = () => {
     return (
         <>
-            <Register />
+            <ApplyAccount />
         </>
-    )
-}
+    );
+};
 
-export default RegisterPage;
+export default getInformation;
+
