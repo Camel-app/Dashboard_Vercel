@@ -87,21 +87,23 @@ const ApplyAccount = () => {
   const { classes } = useStyles();
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
-
-  const [emailUpdates, setEmailUpdates] = useState(false);
-  const [emailError, setEmailError] = useState("");
   const [usernameError, setUsernameError] = useState("");
+
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [emailUpdates, setEmailUpdates] = useState(false);
+
   const { publicRuntimeConfig } = getConfig();
 
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  const handleEmailUpdateChange = (value) => {
-    setEmailUpdates(value === "yes");
-  };
 
+
+  // username field: 1-14 characters, no special characters except - and _
   const validateUsername = (input) => {
     // Regular expression for email validation
     const usernameRegex = /^(?![-_])[a-zA-Z0-9-_]{1,14}(?<![-_])$/;
@@ -116,6 +118,30 @@ const ApplyAccount = () => {
     } else {
       setUsernameError("");
     }
+  };
+
+
+  // password field: at least 5 characters
+  const validatePassword = (input) => {
+    return input.trim().length >= 5;
+  };
+
+
+  const handlePasswordChange = (event) => {
+    const inputValue = event.target.value;
+    setPassword(inputValue);
+    if (!validatePassword(inputValue)) {
+      setPasswordError("Please enter a valid password with at least 5 characters");
+    } else {
+      setPasswordError("");
+    }
+  };
+
+  
+
+  // email field: must be a valid email address
+  const handleEmailUpdateChange = (value) => {
+    setEmailUpdates(value === "yes");
   };
   const validateEmail = (input) => {
     // Regular expression for email validation
@@ -132,6 +158,9 @@ const ApplyAccount = () => {
       setEmailError("");
     }
   };
+
+
+
 
   const registerUser = async (event) => {
     event.preventDefault();
@@ -191,10 +220,9 @@ const ApplyAccount = () => {
             id="pwdInput"
             label="Password"
             placeholder="Password"
-            onChange={($event) => {
-              setPassword($event.target.value);
-            }}
+            onChange={handlePasswordChange}
             value={password}
+            error={passwordError} // Display error message below the input field
             // {...form.getInputProps("password")}
           />
 
