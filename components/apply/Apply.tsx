@@ -44,33 +44,39 @@ const useStyles = createStyles((theme) => ({
   },
 
   outerDiv: {
+    maxWidth: "400px",
     margin: "auto",
-    border: "1px solid black",
-    fontSize: "20px",
+    border: "none",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+    padding: "20px",
+    backgroundColor:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[6]
+        : theme.colors.gray[0],
+    borderRadius: theme.radius.md,
   },
 
   title: {
+    marginBottom: "20px",
+    textAlign: "center",
     color: theme.colorScheme === "dark" ? theme.white : theme.black,
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-    fontSize: 40,
-    lineHeight: 1.2,
-    fontWeight: 900,
-
-    [theme.fn.smallerThan("xs")]: {
-      fontSize: 28,
-    },
+    fontSize: theme.fontSizes.lg,
+    fontWeight: 700,
   },
 
   subtitle: {
-    color: theme.colorScheme === "dark" ? theme.white : theme.black,
-    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-    fontSize: 30,
-    lineHeight: 1,
-    fontWeight: 900,
+    color: theme.colors.gray[6],
+    fontSize: theme.fontSizes.sm,
+    textAlign: "center",
+    marginBottom: "20px",
+  },
 
-    [theme.fn.smallerThan("xs")]: {
-      fontSize: 20,
-    },
+  inputLabel: {
+    marginBottom: "10px",
+  },
+
+  submitButton: {
+    marginTop: "20px",
   },
 
   highlight: {
@@ -164,105 +170,80 @@ const ApplyAccount = () => {
   };
 
   return (
-    <>
-      <div
-        style={{
-          width: 400,
-          margin: "50px auto",
-          backgroundColor: "#ebedef",
-          borderRadius: 10,
-          padding: 10,
-        }}
-      >
-        {/* <form onSubmit={form.onSubmit((values) => registerUser(values))}> */}
-        <form onSubmit={handleSubmit}>
+    <Container size={420} padding={0} className={classes.outerDiv}>
+      <Title order={2} className={classes.title}>
+        Apply for an Account
+      </Title>
+      <Text size="sm" color="dimmed" className={classes.subtitle}>
+        Fill in the details to join our community.
+      </Text>
+      <form onSubmit={handleSubmit}>
+        <TextInput
+          required
+          label="Username"
+          placeholder="Enter your username"
+          onChange={handleUsernameChange}
+          value={username}
+          error={usernameError}
+          className={classes.inputLabel}
+        />
+        <PasswordInput
+          required
+          label="Password"
+          placeholder="Enter your password"
+          onChange={($event) => setPassword($event.target.value)}
+          value={password}
+          className={classes.inputLabel}
+        />
+        <Select
+          required
+          label="Your Affiliation"
+          placeholder="Select"
+          data={[
+            { value: "researcher", label: "Researcher at University" },
+            { value: "privateCompany", label: "Private Company" },
+            { value: "student", label: "Student" },
+            { value: "other", label: "Somewhere Else" },
+          ]}
+          className={classes.inputLabel}
+        />
+        <Textarea
+          required
+          label="Your Aim in Using CAM"
+          placeholder="Describe your aim"
+          className={classes.inputLabel}
+        />
+        <RadioGroup
+          required
+          label="Receive Email Updates?"
+          onChange={handleEmailUpdateChange}
+          className={classes.inputLabel}
+          value={emailUpdates ? "yes" : "no"} // Ensure this is set based on the state if you need preselection
+        >
+          <Radio value="yes">Yes</Radio>
+          <Radio value="no">No</Radio>
+        </RadioGroup>
+        {emailUpdates && (
           <TextInput
             required
-            id="usernameInput"
-            label="Username"
-            placeholder="Username"
-            onChange={handleUsernameChange}
-            value={username}
-            error={usernameError} // Display error message below the input field
+            label="Email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={handleEmailChange}
+            error={emailError}
+            className={classes.inputLabel}
           />
-
-          <PasswordInput
-            required
-            id="pwdInput"
-            label="Password"
-            placeholder="Password"
-            onChange={($event) => {
-              setPassword($event.target.value);
-            }}
-            value={password}
-            // {...form.getInputProps("password")}
-          />
-
-          <Select
-            required
-            id="affiliationSelect"
-            label="Your Affiliation"
-            placeholder="Select"
-            data={[
-              { value: "researcher", label: "Researcher at University" },
-              { value: "privateCompany", label: "Private Company" },
-              { value: "student", label: "Student" },
-              { value: "other", label: "Somewhere Else" },
-            ]}
-            // {...form.getInputProps("affiliation")}
-          />
-
-          <Textarea
-            required
-            id="aimInput"
-            label="Your Aim in Using CAM"
-            placeholder="Describe your aim"
-            // {...form.getInputProps("aim")}
-          />
-
-          <RadioGroup
-            required
-            id="emailUpdates"
-            label="Receive Email Updates?"
-            onChange={handleEmailUpdateChange}
-            // {...form.getInputProps("emailUpdates")}
-          >
-            <Radio value="yes">Yes</Radio>
-            <Radio value="no">No</Radio>
-          </RadioGroup>
-
-          {emailUpdates && (
-            <div>
-              <TextInput
-                required
-                id="emailInput"
-                label="Email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={handleEmailChange}
-                error={emailError}
-              />
-            </div>
-          )}
-
-          <Textarea
-            id="remarksInput"
-            label="Anything to Add?"
-            placeholder="Do you need any support, have any remarks, etc.?"
-            // {...form.getInputProps("remarks")}
-          />
-
-          <Space h="xl" />
-          <div style={{ display: "flex", justifyContent: "right" }}>
-            {/* {isError && <Text color="red">Please check your input</Text>}
-              {isLoading && <Loader />} */}
-            <Button id="submit" type="submit">
-              Submit
-            </Button>
-          </div>
-        </form>
-      </div>
-    </>
+        )}
+        <Textarea
+          label="Anything to Add?"
+          placeholder="Do you need any support, have any remarks, etc.?"
+          className={classes.inputLabel}
+        />
+        <Button fullWidth className={classes.submitButton} type="submit">
+          Submit
+        </Button>
+      </form>
+    </Container>
   );
 };
 
